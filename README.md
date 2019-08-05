@@ -1,2 +1,9 @@
 # build
-Builds entire kAppNav project.
+Builds Docker images for entire kAppNav project.
+
+Procedure:
+
+1. md kappnav
+2. cd kappnav
+3. git clone all other projects (can skip kappnav.github.io)
+4. ./build.sh
