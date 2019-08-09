@@ -17,6 +17,25 @@
 #*
 #*****************************************************************
 
+# Clone all the kappnav repos needed for build, if not already done
+cd ..
+if [ ! -d "init" ]; then
+    git clone https://github.com/kappnav/init.git
+fi
+if [ ! -d "apis" ]; then
+    git clone https://github.com/kappnav/apis.git
+fi
+if [ ! -d "controller" ]; then
+    git clone https://github.com/kappnav/controller.git
+fi
+if [ ! -d "operator" ]; then
+    git clone https://github.com/kappnav/operator.git
+fi
+if [ ! -d "ui" ]; then
+    git clone https://github.com/kappnav/ui.git
+fi
+cd -
+
 cd ../init ; ./build.sh; cd -
 cd ../operator; ./build.sh; cd -
 cd ../ui; ./build.sh; cd - 
