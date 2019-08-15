@@ -1,6 +1,8 @@
 # build
 Builds Docker images for entire kAppNav project.
 
+Prereq: docker
+
 Procedure:
 
 1. md kappnav
