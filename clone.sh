@@ -19,11 +19,11 @@
 # clone all development directories except website
 
 # core
-git clone https://github.com/kappnav/apis.git 
-git clone https://github.com/kappnav/init.git 
-git clone https://github.com/kappnav/operator.git 
-git clone https://github.com/kappnav/ui.git 
-git clone https://github.com/kappnav/controller.git 
+git clone https://github.com/kappnav/apis.git ../apis 
+git clone https://github.com/kappnav/init.git ../init
+git clone https://github.com/kappnav/operator.git ../operator 
+git clone https://github.com/kappnav/ui.git ../ui
+git clone https://github.com/kappnav/controller.git ../controller 
 
 # samples
-git clone https://github.com/kappnav/samples.git 
+git clone https://github.com/kappnav/samples.git ../samples
