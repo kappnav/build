@@ -17,12 +17,34 @@
 #*
 #*****************************************************************
 
-projs='README init samples apis controller operator ui build' 
+org=$1
 
-for p in $projs; do 
-    if [ -d ../$p ]; then
-	    cd ../$p
-	    echo Pulling $p repo 
-	    git pull
-    fi
+image=$2
+
+if [ x$org == x ]; then
+	echo Push local kAppNav images to specified dockerhub.com organization.
+	echo 
+	echo Note: this script will attempt 'docker login'
+	echo 
+	echo syntax:
+	echo
+	echo "pushimages.sh <docker organization> [<image>]"
+	echo
+	echo "Where image is one of: init, ui, apis, controller, operator"
+	exit 1
+fi
+
+docker login 
+
+if [ x$image == x ]; then 
+	imagelist="kappnav-init kappnav-ui kappnav-apis kappnav-controller kappnav-operator" 
+else 
+	imagelist="kappnav-"$image
+fi
+tag=latest
+for image in $imagelist; do
+   echo docker tag $image:$tag $org/$image:$tag
+   docker tag $image:$tag $org/$image:$tag
+   echo docker push $org/$image:$tag
+   docker push $org/$image:$tag
 done

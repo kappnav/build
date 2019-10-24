@@ -17,12 +17,11 @@
 #*
 #*****************************************************************
 
-projs='README init samples apis controller operator ui build' 
+# this script uninstalls kAppNav from kubernetes cluster 
+# corresponding to currently active kube config 
+#
+# Issue 'kubectl config current-context' if you are uncertain.
 
-for p in $projs; do 
-    if [ -d ../$p ]; then
-	    cd ../$p
-	    echo Pulling $p repo 
-	    git pull
-    fi
-done
+kubectl delete -f ../operator/kappnav-delete-CR.yaml -n kappnav --now
+kubectl delete -f ../operator/kappnav-delete.yaml -n kappnav
+kubectl delete namespace kappnav

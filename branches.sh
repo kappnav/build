@@ -16,13 +16,12 @@
 #* limitations under the License.
 #*
 #*****************************************************************
+# shows all branches
 
-projs='README init samples apis controller operator ui build' 
+projs='README build init samples apis controller operator ui' 
 
 for p in $projs; do 
-    if [ -d ../$p ]; then
-	    cd ../$p
-	    echo Pulling $p repo 
-	    git pull
-    fi
+	cd ../$p
+	echo $p project: 
+	git branch
 done

@@ -17,12 +17,26 @@
 #*
 #*****************************************************************
 
-projs='README init samples apis controller operator ui build' 
+org=$1
 
-for p in $projs; do 
-    if [ -d ../$p ]; then
-	    cd ../$p
-	    echo Pulling $p repo 
-	    git pull
-    fi
-done
+if [ x$org == x ]; then
+    echo Install kAppNav from specified dockerhub.com organization.
+	echo 
+	echo syntax: 
+	echo 
+	echo "install.sh <docker organization>"
+	exit 1
+fi
+
+if [ -d ../operator ]; then 
+
+	# pluck image tag off operator image 
+	tag=$(cat ../operator/kappnav.yaml | grep operator: | awk '{ split($0,p,":"); print p[3] }')
+
+	kubectl create namespace kappnav 
+
+	cat ../operator/kappnav.yaml | sed "s|repository: kappnav/|repository: $org/kappnav-|" | sed "s|tag: $tag|tag: latest|" | sed "s|image: kappnav/operator:$tag|image: $org/kappnav-operator:latest|" | kubectl create -f - -n kappnav 
+else
+	echo Cannot install: file ../operator/kappnav.yaml not found. 
+	exit 1
+fi

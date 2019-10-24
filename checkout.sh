@@ -17,12 +17,20 @@
 #*
 #*****************************************************************
 
-projs='README init samples apis controller operator ui build' 
+branch=$1
 
-for p in $projs; do 
-    if [ -d ../$p ]; then
-	    cd ../$p
-	    echo Pulling $p repo 
-	    git pull
-    fi
-done
+if [ x$1 == 'x' ]; then
+	echo Checkout specified branch across all kAppNav projects.
+	echo 
+	echo syntax:
+	echo
+	echo "checkout <branch>" 
+else
+	projs='README build init samples apis controller operator ui' 
+
+	for p in $projs; do 
+		cd ../$p
+		echo $p project:
+		git checkout $branch 
+	done
+fi
