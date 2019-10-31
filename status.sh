@@ -18,10 +18,30 @@
 #*****************************************************************
 # show status of all projects 
 
+# make sure running in build directory 
+arg=$1
+if [ $(echo $PWD | awk '{ n=split($0,d,"/"); print d[n] }') != 'build' ]; then 
+    echo 'Error: $kappnav/build dir must be current dir.'
+    echo ''
+    arg="--?"
+fi
+
+if [ x$arg == x'--?' ]; then
+	echo "Attempt git status on all kAppNav projects, skipping any that do not exist: "
+	echo ""
+	echo ""
+	echo "syntax:"
+	echo ""
+	echo "status.sh"
+	exit 1
+fi
+
 projs='README build init samples apis controller operator ui' 
 
-for p in $projs; do 
-	cd ../$p
-	echo ">>>" $p project: 
-	git status
+for p in $projs; do
+    if [ -d ../$p ]; then 
+		cd ../$p
+		echo ">>>" $p project: 
+		git status
+	fi
 done

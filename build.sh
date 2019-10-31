@@ -1,5 +1,4 @@
 #!/bin/bash
-
 #*****************************************************************
 #*
 #* Copyright 2019 IBM Corporation
@@ -16,28 +15,35 @@
 #* limitations under the License.
 #*
 #*****************************************************************
+arg=$1
+projs='init apis controller operator ui'
+
+# make sure running in build directory 
+if [ $(echo $PWD | awk '{ n=split($0,d,"/"); print d[n] }') != 'build' ]; then 
+    echo 'Error: $kappnav/build dir must be current dir.'
+    echo ''
+    arg="--?"
+fi
+
+if [ x$arg == x'--?' ]; then
+    echo "Builds kAppNav project by cloning and building all code repos:"
+	echo ""
+	echo "syntax:"
+	echo ""
+	echo "build.sh"
+	exit 1
+fi
 
 # Clone all the kappnav repos needed for build, if not already done
 cd ..
-if [ ! -d "init" ]; then
-    git clone https://github.com/kappnav/init.git
-fi
-if [ ! -d "apis" ]; then
-    git clone https://github.com/kappnav/apis.git
-fi
-if [ ! -d "controller" ]; then
-    git clone https://github.com/kappnav/controller.git
-fi
-if [ ! -d "operator" ]; then
-    git clone https://github.com/kappnav/operator.git
-fi
-if [ ! -d "ui" ]; then
-    git clone https://github.com/kappnav/ui.git
-fi
+for p in $projs; do 
+    if [ ! -d $p ]; then
+        git clone https://github.com/kappnav/$p.git
+    fi
+done
 cd -
 
-cd ../init ; ./build.sh; cd -
-cd ../operator; ./build.sh; cd -
-cd ../ui; ./build.sh; cd - 
-cd ../apis; ./build.sh; cd - 
-cd ../controller; ./build.sh; cd -
+# now build all projects 
+for p in $projs; do 
+    cd ../$p ; ./build.sh; cd -
+done 

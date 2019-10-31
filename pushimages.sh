@@ -21,10 +21,20 @@ org=$1
 
 image=$2
 
-if [ x$org == x ]; then
+arg=$org
+# make sure running in build directory 
+if [ $(echo $PWD | awk '{ n=split($0,d,"/"); print d[n] }') != 'build' ]; then 
+    echo 'Error: $kappnav/build dir must be current dir.'
+    echo ''
+    arg="--?"
+fi
+
+if [ x$arg == x'--?' ] || [ x$arg == 'x' ]; then
 	echo Push local kAppNav images to specified dockerhub.com organization.
 	echo 
-	echo Note: this script will attempt 'docker login'
+	echo Notes: 
+	echo "1. this script will attempt 'docker login'"
+	echo "2. images will be tagged latest"
 	echo 
 	echo syntax:
 	echo

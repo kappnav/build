@@ -16,11 +16,27 @@
 #* limitations under the License.
 #*
 #*****************************************************************
-
 # this script uninstalls kAppNav from kubernetes cluster 
 # corresponding to currently active kube config 
 #
 # Issue 'kubectl config current-context' if you are uncertain.
+arg=$1
+if [ $(echo $PWD | awk '{ n=split($0,d,"/"); print d[n] }') != 'build' ]; then 
+    echo 'Error: $kappnav/build dir must be current dir.'
+    echo ''
+    arg="--?"
+fi
+
+if [ x$arg == x'--?' ]; then
+    echo "This script uninstalls kAppNav from current kubernetes cluster." 
+    echo ""
+    echo "Issue 'kubectl config current-context' to confirm current cluster."
+    echo ""
+	echo "syntax:"
+	echo ""
+	echo "uninstall.sh"
+    exit 1
+fi
 
 kubectl delete -f ../operator/kappnav-delete-CR.yaml -n kappnav --now
 kubectl delete -f ../operator/kappnav-delete.yaml -n kappnav

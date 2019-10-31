@@ -16,13 +16,21 @@
 #* limitations under the License.
 #*
 #*****************************************************************
-
 org=$1
 
-if [ x$org == x ]; then
-    echo Install kAppNav from specified dockerhub.com organization.
+arg=$org
+# make sure running in build directory 
+if [ $(echo $PWD | awk '{ n=split($0,d,"/"); print d[n] }') != 'build' ]; then 
+    echo 'Error: $kappnav/build dir must be current dir.'
+    echo ''
+    arg="--?"
+fi
+
+if [ x$arg == x'--?' ] || [ x$arg == 'x' ]; then
+    echo "Install kAppNav from specified dockerhub.com organization."
+	echo "Will install images tagged latest."
 	echo 
-	echo syntax: 
+	echo "syntax:" 
 	echo 
 	echo "install.sh <docker organization>"
 	exit 1
