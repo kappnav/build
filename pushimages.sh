@@ -16,9 +16,8 @@
 #* limitations under the License.
 #*
 #*****************************************************************
-
+# push all images or specified image to docker hub
 org=$1
-
 image=$2
 
 arg=$org

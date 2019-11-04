@@ -15,8 +15,9 @@
 #* limitations under the License.
 #*
 #*****************************************************************
-arg=$1
-projs='init apis controller operator ui'
+# build all projects or specified project
+proj=$1
+arg=$proj
 
 # make sure running in build directory 
 if [ $(echo $PWD | awk '{ n=split($0,d,"/"); print d[n] }') != 'build' ]; then 
@@ -32,6 +33,13 @@ if [ x$arg == x'--?' ]; then
 	echo ""
 	echo "build.sh"
 	exit 1
+fi
+
+# determine if building all projects or just one
+if [ x$proj == x ]; then
+    projs='init apis controller operator ui'
+else 
+    projs=$proj
 fi
 
 # Clone all the kappnav repos needed for build, if not already done
