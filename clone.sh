@@ -1,5 +1,4 @@
 #!/bin/bash
-
 #*****************************************************************
 #*
 #* Copyright 2019 IBM Corporation
@@ -17,13 +16,26 @@
 #*
 #*****************************************************************
 # clone all development directories except website
+arg=$1 
+projs='README build init samples apis controller operator ui' 
 
-# core
-git clone https://github.com/kappnav/apis.git ../apis 
-git clone https://github.com/kappnav/init.git ../init
-git clone https://github.com/kappnav/operator.git ../operator 
-git clone https://github.com/kappnav/ui.git ../ui
-git clone https://github.com/kappnav/controller.git ../controller 
+# make sure running in build directory 
+if [ $(echo $PWD | awk '{ n=split($0,d,"/"); print d[n] }') != 'build' ]; then 
+    echo 'Error: $kappnav/build dir must be current dir.'
+    echo ''
+    arg="--?"
+fi
 
-# samples
-git clone https://github.com/kappnav/samples.git ../samples
+if [ x$arg == x'--?' ]; then
+	echo Clones all kAppNav projects.
+	echo 
+	echo syntax:
+	echo
+	echo "clone.sh" 
+    exit 0
+fi
+
+# clone all projects 
+for p in $projs; do 
+    git clone https://github.com/kappnav/$p.git ../$p 
+done 

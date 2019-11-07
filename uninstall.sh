@@ -16,10 +16,11 @@
 #* limitations under the License.
 #*
 #*****************************************************************
-# does git pull on all projects
-
+# this script uninstalls kAppNav from kubernetes cluster 
+# corresponding to currently active kube config 
+#
+# Issue 'kubectl config current-context' if you are uncertain.
 arg=$1
-# make sure running in build directory 
 if [ $(echo $PWD | awk '{ n=split($0,d,"/"); print d[n] }') != 'build' ]; then 
     echo 'Error: $kappnav/build dir must be current dir.'
     echo ''
@@ -27,21 +28,16 @@ if [ $(echo $PWD | awk '{ n=split($0,d,"/"); print d[n] }') != 'build' ]; then
 fi
 
 if [ x$arg == x'--?' ]; then
-	echo "Attempt git pull on all kAppNav projects, skipping any that do not exist: "
-	echo ""
-	echo ""
+    echo "This script uninstalls kAppNav from current kubernetes cluster." 
+    echo ""
+    echo "Issue 'kubectl config current-context' to confirm current cluster."
+    echo ""
 	echo "syntax:"
 	echo ""
-	echo "pull.sh"
-	exit 1
+	echo "uninstall.sh"
+    exit 1
 fi
 
-projs='README init samples apis controller operator ui build' 
-
-for p in $projs; do 
-    if [ -d ../$p ]; then
-	    cd ../$p
-	    echo Pulling $p repo 
-	    git pull
-    fi
-done
+kubectl delete -f ../operator/kappnav-delete-CR.yaml -n kappnav --now
+kubectl delete -f ../operator/kappnav-delete.yaml -n kappnav
+kubectl delete namespace kappnav

@@ -15,3 +15,19 @@ Procedure:
 # install 
 
 See https://github.com/kappnav/README#install
+
+# local development 
+
+The following scripts are supplied to help with local development: 
+
+| Script | Description | 
+|--------|-------|
+| branches.sh | Displays current branch of all kAppNav projects. | 
+| build.sh | Builds all kAppNav projects or specified project. |
+| checkout.sh \<branch\> | Checkout specified branch across all kAppNav projects. |
+| clone.sh | Clone all kAppNav projects. | 
+| install.sh  \<docker-org\>| Install kAppNav images to current Kubernetes config from specified dockerhub organization. | 
+| pull.sh | Pull all kAppNav projects. |
+| pushimages.sh \<docker-org\> [\<image\>] | Push all kAppNav images or specified image to target dockerhub organization. | 
+| status.sh | Display current git status of all kAppNav projects. | 
+| uninstall.sh | Uninstall kAppNav from current Kubernetes config. |

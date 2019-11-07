@@ -1,5 +1,4 @@
 #!/bin/bash
-
 #*****************************************************************
 #*
 #* Copyright 2019 IBM Corporation
@@ -16,9 +15,12 @@
 #* limitations under the License.
 #*
 #*****************************************************************
-# does git pull on all projects
+# does check out of specified branch across all kappnav projects 
+branch=$1
 
-arg=$1
+projs='README build init samples apis controller operator ui' 
+
+arg=$branch
 # make sure running in build directory 
 if [ $(echo $PWD | awk '{ n=split($0,d,"/"); print d[n] }') != 'build' ]; then 
     echo 'Error: $kappnav/build dir must be current dir.'
@@ -26,22 +28,21 @@ if [ $(echo $PWD | awk '{ n=split($0,d,"/"); print d[n] }') != 'build' ]; then
     arg="--?"
 fi
 
-if [ x$arg == x'--?' ]; then
-	echo "Attempt git pull on all kAppNav projects, skipping any that do not exist: "
-	echo ""
-	echo ""
-	echo "syntax:"
-	echo ""
-	echo "pull.sh"
-	exit 1
-fi
+if [ x$arg == x'--?' ] || [ x$arg == 'x' ]; then
+	echo Checkout specified branch across all kAppNav projects.
+	echo 
+	echo syntax:
+	echo
+	echo "checkout.sh <branch>" 
+	exit 0
+fi 
 
-projs='README init samples apis controller operator ui build' 
-
+# build projects
 for p in $projs; do 
-    if [ -d ../$p ]; then
-	    cd ../$p
-	    echo Pulling $p repo 
-	    git pull
-    fi
+	if [ -d ../$p ]; then 
+		cd ../$p
+		echo $p project:
+		git checkout $branch
+		cd -
+	fi 
 done
