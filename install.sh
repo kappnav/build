@@ -17,7 +17,7 @@
 #*
 #*****************************************************************
 org=$1
-
+kubeenv=$2
 arg=$org
 # make sure running in build directory 
 if [ $(echo $PWD | awk '{ n=split($0,d,"/"); print d[n] }') != 'build' ]; then 
@@ -32,8 +32,21 @@ if [ x$arg == x'--?' ] || [ x$arg == 'x' ]; then
 	echo 
 	echo "syntax:" 
 	echo 
-	echo "install.sh <docker organization>"
+	echo "install.sh <docker organization> [kube env]"
+	echo 
+	echo "kube env is one of:  ocp, okd, minikube.  Default is okd."
 	exit 1
+fi
+
+# set default kubeenv if not specified 
+if [ x$kubeenv == 'x' ]; then
+	kubeenv=okd
+else
+# validate
+	if ! [ $kubeenv == 'ocp' ] && ! [ $kubeenv == 'okd' ] && ! [ $kubeenv == 'minikube' ]; then
+		echo "kubeEnv $kubeenv value is not valid.  Must be ocp, okd, or minikube"
+		exit 1
+	fi
 fi
 
 if [ -d ../operator ]; then 
@@ -43,7 +56,7 @@ if [ -d ../operator ]; then
 
 	kubectl create namespace kappnav 
 
-	cat ../operator/kappnav.yaml | sed "s|repository: kappnav/|repository: $org/kappnav-|" | sed "s|tag: $tag|tag: latest|" | sed "s|image: kappnav/operator:$tag|image: $org/kappnav-operator:latest|" | kubectl create -f - -n kappnav 
+	cat ../operator/kappnav.yaml | sed "s|kubeEnv: okd|kubeEnv: $kubeenv|" | sed "s|repository: kappnav/|repository: $org/kappnav-|" | sed "s|tag: $tag|tag: latest|" | sed "s|image: kappnav/operator:$tag|image: $org/kappnav-operator:latest|" | kubectl create -f - -n kappnav 
 else
 	echo Cannot install: file ../operator/kappnav.yaml not found. 
 	exit 1
