@@ -1,4 +1,5 @@
 #!/bin/bash
+
 #*****************************************************************
 #*
 #* Copyright 2019 IBM Corporation
@@ -15,10 +16,9 @@
 #* limitations under the License.
 #*
 #*****************************************************************
-# build all projects or specified project
-proj=$1
-arg=$proj
-
+org=$1
+kubeenv=$2
+arg=$org
 # make sure running in build directory 
 if [ $(echo $PWD | awk '{ n=split($0,d,"/"); print d[n] }') != 'build' ]; then 
     echo 'Error: $kappnav/build dir must be current dir.'
@@ -26,32 +26,38 @@ if [ $(echo $PWD | awk '{ n=split($0,d,"/"); print d[n] }') != 'build' ]; then
     arg="--?"
 fi
 
-if [ x$arg == x'--?' ]; then
-    echo "Builds kAppNav project by cloning and building all code repos:"
-	echo ""
-	echo "syntax:"
-	echo ""
-	echo "build.sh"
+if [ x$arg == x'--?' ] || [ x$arg == 'x' ]; then
+    echo "Install kAppNav from specified dockerhub.com organization."
+	echo "Will install images tagged latest."
+	echo 
+	echo "syntax:" 
+	echo 
+	echo "install.sh <docker organization> [kube env]"
+	echo 
+	echo "kube env is one of:  ocp, okd, minikube.  Default is okd."
 	exit 1
 fi
 
-# determine if building all projects or just one
-if [ x$proj == x ]; then
-    projs='init apis controller operator ui'
-else 
-    projs=$proj
+# set default kubeenv if not specified 
+if [ x$kubeenv == 'x' ]; then
+	kubeenv=okd
+else
+# validate
+	if ! [ $kubeenv == 'ocp' ] && ! [ $kubeenv == 'okd' ] && ! [ $kubeenv == 'minikube' ]; then
+		echo "kubeEnv $kubeenv value is not valid.  Must be ocp, okd, or minikube"
+		exit 1
+	fi
 fi
 
-# Clone all the kappnav repos needed for build, if not already done
-cd ..
-for p in $projs; do 
-    if [ ! -d $p ]; then
-        git clone https://github.com/kappnav/$p.git
-    fi
-done
-cd -
+if [ -d ../operator ]; then 
 
-# now build all projects 
-for p in $projs; do 
-    cd ../$p ; ./build.sh; cd -
-done 
+	# pluck image tag off operator image 
+	tag=$(cat ../operator/kappnav.yaml | grep operator: | awk '{ split($0,p,":"); print p[3] }')
+
+	kubectl create namespace kappnav 
+
+	cat ../operator/kappnav.yaml | sed "s|kubeEnv: okd|kubeEnv: $kubeenv|" | sed "s|repository: kappnav/|repository: $org/kappnav-|" | sed "s|tag: $tag|tag: latest|" | sed "s|image: kappnav/operator:$tag|image: $org/kappnav-operator:latest|" | kubectl create -f - -n kappnav 
+else
+	echo Cannot install: file ../operator/kappnav.yaml not found. 
+	exit 1
+fi
