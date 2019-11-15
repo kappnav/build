@@ -16,9 +16,11 @@
 #* limitations under the License.
 #*
 #*****************************************************************
-# does git pull on all projects
+# push all images or specified image to docker hub
+org=$1
+image=$2
 
-arg=$1
+arg=$org
 # make sure running in build directory 
 if [ $(echo $PWD | awk '{ n=split($0,d,"/"); print d[n] }') != 'build' ]; then 
     echo 'Error: $kappnav/build dir must be current dir.'
@@ -26,22 +28,32 @@ if [ $(echo $PWD | awk '{ n=split($0,d,"/"); print d[n] }') != 'build' ]; then
     arg="--?"
 fi
 
-if [ x$arg == x'--?' ]; then
-	echo "Attempt git pull on all kAppNav projects, skipping any that do not exist: "
-	echo ""
-	echo ""
-	echo "syntax:"
-	echo ""
-	echo "pull.sh"
+if [ x$arg == x'--?' ] || [ x$arg == 'x' ]; then
+	echo Push local kAppNav images to specified dockerhub.com organization.
+	echo 
+	echo Notes: 
+	echo "1. this script will attempt 'docker login'"
+	echo "2. images will be tagged latest"
+	echo 
+	echo syntax:
+	echo
+	echo "pushimages.sh <docker organization> [<image>]"
+	echo
+	echo "Where image is one of: init, ui, apis, controller, operator"
 	exit 1
 fi
 
-projs='README init samples apis controller operator ui build' 
+docker login 
 
-for p in $projs; do 
-    if [ -d ../$p ]; then
-	    cd ../$p
-	    echo Pulling $p repo 
-	    git pull
-    fi
+if [ x$image == x ]; then 
+	imagelist="kappnav-init kappnav-ui kappnav-apis kappnav-controller kappnav-operator" 
+else 
+	imagelist="kappnav-"$image
+fi
+tag=latest
+for image in $imagelist; do
+   echo docker tag $image:$tag $org/$image:$tag
+   docker tag $image:$tag $org/$image:$tag
+   echo docker push $org/$image:$tag
+   docker push $org/$image:$tag
 done
