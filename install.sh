@@ -1,5 +1,4 @@
 #!/bin/bash
-
 #*****************************************************************
 #*
 #* Copyright 2019 IBM Corporation
@@ -16,9 +15,10 @@
 #* limitations under the License.
 #*
 #*****************************************************************
-org=$1
+# build all projects or specified project
+proj=$1
+arg=$proj
 
-arg=$org
 # make sure running in build directory 
 if [ $(echo $PWD | awk '{ n=split($0,d,"/"); print d[n] }') != 'build' ]; then 
     echo 'Error: $kappnav/build dir must be current dir.'
@@ -26,25 +26,32 @@ if [ $(echo $PWD | awk '{ n=split($0,d,"/"); print d[n] }') != 'build' ]; then
     arg="--?"
 fi
 
-if [ x$arg == x'--?' ] || [ x$arg == 'x' ]; then
-    echo "Install kAppNav from specified dockerhub.com organization."
-	echo "Will install images tagged latest."
-	echo 
-	echo "syntax:" 
-	echo 
-	echo "install.sh <docker organization>"
+if [ x$arg == x'--?' ]; then
+    echo "Builds kAppNav project by cloning and building all code repos:"
+	echo ""
+	echo "syntax:"
+	echo ""
+	echo "build.sh"
 	exit 1
 fi
 
-if [ -d ../operator ]; then 
-
-	# pluck image tag off operator image 
-	tag=$(cat ../operator/kappnav.yaml | grep operator: | awk '{ split($0,p,":"); print p[3] }')
-
-	kubectl create namespace kappnav 
-
-	cat ../operator/kappnav.yaml | sed "s|repository: kappnav/|repository: $org/kappnav-|" | sed "s|tag: $tag|tag: latest|" | sed "s|image: kappnav/operator:$tag|image: $org/kappnav-operator:latest|" | kubectl create -f - -n kappnav 
-else
-	echo Cannot install: file ../operator/kappnav.yaml not found. 
-	exit 1
+# determine if building all projects or just one
+if [ x$proj == x ]; then
+    projs='init apis controller operator ui'
+else 
+    projs=$proj
 fi
+
+# Clone all the kappnav repos needed for build, if not already done
+cd ..
+for p in $projs; do 
+    if [ ! -d $p ]; then
+        git clone https://github.com/kappnav/$p.git
+    fi
+done
+cd -
+
+# now build all projects 
+for p in $projs; do 
+    cd ../$p ; ./build.sh; cd -
+done 
