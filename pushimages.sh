@@ -21,8 +21,8 @@ org=$1
 image=$2
 
 arg=$org
-# make sure running in build directory 
-if [ $(echo $PWD | awk '{ n=split($0,d,"/"); print d[n] }') != 'build' ]; then 
+# make sure running in build directory
+if [ $(echo $PWD | awk '{ n=split($0,d,"/"); print d[n] }') != 'build' ]; then
     echo 'Error: $kappnav/build dir must be current dir.'
     echo ''
     arg="--?"
@@ -30,11 +30,11 @@ fi
 
 if [ x$arg == x'--?' ] || [ x$arg == 'x' ]; then
 	echo Push local kAppNav images to specified dockerhub.com organization.
-	echo 
-	echo Notes: 
+	echo
+	echo Notes:
 	echo "1. this script will attempt 'docker login'"
 	echo "2. images will be tagged latest"
-	echo 
+	echo
 	echo syntax:
 	echo
 	echo "pushimages.sh <docker organization> [<image>]"
@@ -43,11 +43,11 @@ if [ x$arg == x'--?' ] || [ x$arg == 'x' ]; then
 	exit 1
 fi
 
-docker login 
+docker login
 
-if [ x$image == x ]; then 
-	imagelist="kappnav-init kappnav-ui kappnav-apis kappnav-controller kappnav-operator" 
-else 
+if [ x$image == x ]; then
+	imagelist="kappnav-ui kappnav-apis kappnav-controller kappnav-operator" 
+else
 	imagelist="kappnav-"$image
 fi
 tag=latest

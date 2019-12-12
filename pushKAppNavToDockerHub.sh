@@ -36,7 +36,7 @@ if [ x$1 == x'--?' ] || [ x$1 == x'-?' ]; then
 fi
 
 if [ x$image == x ]; then
-	imagelist="apis controller init operator ui"
+	imagelist="apis controller operator ui"
 else
 	imagelist=$image
 fi
