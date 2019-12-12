@@ -19,8 +19,8 @@
 proj=$1
 arg=$proj
 
-# make sure running in build directory 
-if [ $(echo $PWD | awk '{ n=split($0,d,"/"); print d[n] }') != 'build' ]; then 
+# make sure running in build directory
+if [ $(echo $PWD | awk '{ n=split($0,d,"/"); print d[n] }') != 'build' ]; then
     echo 'Error: $kappnav/build dir must be current dir.'
     echo ''
     arg="--?"
@@ -37,21 +37,21 @@ fi
 
 # determine if building all projects or just one
 if [ x$proj == x ]; then
-    projs='init apis controller operator ui'
-else 
+    projs='apis controller operator ui'
+else
     projs=$proj
 fi
 
 # Clone all the kappnav repos needed for build, if not already done
 cd ..
-for p in $projs; do 
+for p in $projs; do
     if [ ! -d $p ]; then
         git clone https://github.com/kappnav/$p.git
     fi
 done
 cd -
 
-# now build all projects 
-for p in $projs; do 
+# now build all projects
+for p in $projs; do
     cd ../$p ; ./build.sh; cd -
-done 
+done
