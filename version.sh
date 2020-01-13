@@ -1,7 +1,7 @@
 #!/bin/bash
 #*****************************************************************
 #*
-#* Copyright 2019 IBM Corporation
+#* Copyright 2019, 2020 IBM Corporation
 #*
 #* Licensed under the Apache License, Version 2.0 (the "License");
 #* you may not use this file except in compliance with the License.
@@ -17,4 +17,4 @@
 #*****************************************************************
 # sets the version number to be used for all kAppNav images
 
-VERSION='0.5.0'
+VERSION='0.6.0'
