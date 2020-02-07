@@ -2,7 +2,7 @@
 
 #*****************************************************************
 #*
-#* Copyright 2019 IBM Corporation
+#* Copyright 2019, 2020 IBM Corporation
 #*
 #* Licensed under the Apache License, Version 2.0 (the "License");
 #* you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ if [ x$1 == x'--?' ] || [ x$1 == x'-?' ]; then
 	echo
 	echo syntax:
 	echo
-	echo "./pushToKAppNavStaging.sh [<image>]"
+	echo "./pushKAppNavToDockerHub.sh [<image>]"
 	echo
   echo "By default all images are pushed.  A single image can be pushed by providing the optional"
   echo "image parameter, where image is one of: apis, controller, init, operator, ui"
