@@ -17,4 +17,4 @@
 #*****************************************************************
 # sets the version number to be used for all kAppNav images
 
-VERSION='0.6.0'
+VERSION='0.7.0'
