@@ -1,0 +1,81 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  annotations:
+    kappnav.subkind: liberty
+  name: websphere-liberty
+  labels:
+    app: websphere-liberty
+    app.kubernetes.io/component: websphere-liberty
+    app.kubernetes.io/instance: websphere-liberty
+    app.kubernetes.io/part-of: websphere-liberty
+    kappnav.actions.admincenter: admincenter
+    solution: stock-trader
+spec:
+  selector:
+    matchLabels:
+      app: websphere-liberty
+  template:
+    metadata:
+      labels:
+        app: websphere-liberty
+        deploymentconfig: websphere-liberty
+    spec:
+      containers:
+        - name: websphere-liberty
+          ports:
+            - containerPort: 9100
+              protocol: TCP
+            - containerPort: 9500
+              protocol: TCP
+          image: docker.io/juniarti/websphere-liberty-admincenter:latest
+          imagePullPolicy: Always
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      schedulerName: default-scheduler
+
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+    name: websphere-liberty
+    labels:
+        app: websphere-liberty
+spec:
+    ports:
+      - name: 9100-tcp
+        protocol: TCP
+        port: 9100
+        targetPort: 9100
+      - name: 9500-tcp
+        protocol: TCP
+        port: 9500
+        targetPort: 9500
+    selector:
+        app: websphere-liberty
+        deploymentconfig: websphere-liberty
+    type: ClusterIP
+
+---
+
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+    name: websphere-liberty
+    labels:
+        app: websphere-liberty
+spec:
+    to:
+        kind: Service
+        name: websphere-liberty
+        weight: 100
+    port:
+        targetPort: 9500-tcp
+    tls:
+        termination: passthrough
+    wildcardPolicy: None
+
+
+  
