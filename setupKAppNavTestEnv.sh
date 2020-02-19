@@ -1,7 +1,7 @@
 #!/bin/bash
 ####################################################
 #
-# setupTestEnv.sh for Application Navigator
+# setupKAppNavTestEnv.sh for Kubernetes Application Navigator
 #
 ####################################################
 
@@ -44,8 +44,7 @@ else
     # login to target platform
     echo "oc login -u $platformUsername -p $platformPassword $platformURL"
     oc login -u $platformUsername -p $platformPassword $platformURL
-    rc=$?
-    if [ $rc -eq 0 ]; then
+    if [ $? -eq 0 ]; then
         echo "########## OC login successfully. ##########"
     else
         echo "########## OC login failed, exiting. ##########"
@@ -90,8 +89,7 @@ fi
 # build kappnav
 echo "########## Building KAppNav ########## "
 ./build.sh
-rc=$?
-if [ $rc -eq 0 ]; then
+if [ $? -eq 0 ]; then
     echo "########## Build successfully. ##########"
 else
     echo "########## Build failed, exiting. ##########"
@@ -101,8 +99,7 @@ fi
 # push all images to docker hub
 echo "########## Pushing all KAppNav images to docker hub of $dockerID ########## "
 ./pushimages.sh $dockerID
-rc=$?
-if [ $rc -eq 0 ]; then
+if [ $? -eq 0 ]; then
     echo "########## Pushed KAppNav images successfully. ##########"
 else
     echo "########## Pushed KAppNav images failed, exiting. ##########"
@@ -111,8 +108,7 @@ fi
 
 # installing to target platform
 ./install.sh $dockerID $platform
-rc=$?
-if [ $rc -eq 0 ]; then
+if [ $? -eq 0 ]; then
     echo "########## Install successfully. ##########"
 else
     echo "########## Install failed, exiting. ##########"
@@ -121,31 +117,31 @@ fi
 
 # check to make sure KAppNav healthy
 ./test/isKAppNavHealthy.sh kappnav
-if [ $rc -ne 0 ]; then
+if [ $? -ne 0 ]; then
     exit 1
 fi
 
 # check to hit kappnavui url
 ./test/isKappnavUIOK.sh kappnav $platform
-if [ $rc -ne 0 ]; then
+if [ $? -ne 0 ]; then
     exit 1
 fi
 
 # install sample stocktrader application
 ./test/installStocktrader.sh kappnav
-if [ $rc -ne 0 ]; then
+if [ $? -ne 0 ]; then
     exit 1
 fi
 
 # install sample bookinfo application
 ./test/installBookinfo.sh kappnav
-if [ $rc -ne 0 ]; then
+if [ $? -ne 0 ]; then
     exit 1
 fi
 
 # install websphere liberty in container
 ./test/installLibertyInContainer.sh kappnav
-if [ $rc -ne 0 ]; then
+if [ $? -ne 0 ]; then
     exit 1
 fi
 

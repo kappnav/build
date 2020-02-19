@@ -46,13 +46,13 @@ do
   count=0
   while [ "$status" = "false" ] 
   do 
-      if [ $count -eq 60 ]; then
+      # check to make sure the apps created for 10 minutes at the most with 5s delay in between checking
+      if [ $count -eq 120 ]; then
           exit 1
       else
           echo "kubectl get pods $kappnavPod -n $namespace --no-headers -o custom-columns=Ready:status.containerStatuses[0].ready"
           status=$(kubectl get pods $kappnavPod -n $namespace --no-headers -o custom-columns=Ready:status.containerStatuses[0].ready)
           if [ "$status" = "false" ]; then
-            # check to make sure the apps created for 5 minutes at the most with 5s delay in between checking
             sleep 5
           fi
           count=$((count+1))
