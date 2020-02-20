@@ -118,30 +118,35 @@ fi
 # check to make sure KAppNav healthy
 ./test/isKAppNavHealthy.sh kappnav
 if [ $? -ne 0 ]; then
+    echo "########## isKAppNavHealthy failed, exiting ##########"
     exit 1
 fi
 
 # check to hit kappnavui url
 ./test/isKappnavUIOK.sh kappnav $platform
 if [ $? -ne 0 ]; then
+    echo "########## isKappnavUIOK failed, exiting ##########"
     exit 1
 fi
 
 # install sample stocktrader application
 ./test/installStocktrader.sh kappnav
 if [ $? -ne 0 ]; then
+    echo "########## installStocktrader failed, exiting ##########"
     exit 1
 fi
 
 # install sample bookinfo application
 ./test/installBookinfo.sh kappnav
 if [ $? -ne 0 ]; then
+    echo "########## installBookinfo failed, exiting ##########"
     exit 1
 fi
 
 # install websphere liberty in container
 ./test/installLibertyInContainer.sh kappnav
 if [ $? -ne 0 ]; then
+    echo "########## installLibertyInContainer failed, exiting ##########"
     exit 1
 fi
 
