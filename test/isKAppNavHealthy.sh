@@ -1,3 +1,10 @@
+#!/bin/bash
+####################################################
+#
+# isKAppNavHealthy.sh <namespace>
+#
+####################################################
+
 if [ "$#" -lt 1 ] || [  x$1 = 'x' ] || [  x$1 = x'?' ] || [  x$1 = x'--?' ] || [  x$1 = x'-?' ] || [  x$1 = x'--help'  ] || [  x$1 = x'help' ]; then
   echo Syntax: isKAppNavHealthy.sh \<namespace\>
     echo "Where:"
@@ -6,6 +13,7 @@ if [ "$#" -lt 1 ] || [  x$1 = 'x' ] || [  x$1 = x'?' ] || [  x$1 = x'--?' ] || [
 fi
 
 namespace=$1
+numPods=$2
 
 # get all KAppNav pods
 echo "kubectl get pods -n $namespace --no-headers -o custom-columns=NAME:.metadata.name"
@@ -14,13 +22,8 @@ echo $kappnavPods
 kappnavPodsArray=( $kappnavPods )
 kappnavPodsLen="${#kappnavPodsArray[@]}"
 
-# check to make sure all 4 KAppNav pods created
+# check to make sure all KAppNav pods created
 count=0
-numPods=4
-if [ x$namespace == x'kappnav' ]; then
-  numPods=3
-fi
-
 while [ $kappnavPodsLen -ne $numPods ]
 do
    if [ $count -eq 12 ]; then 

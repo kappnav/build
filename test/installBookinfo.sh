@@ -1,15 +1,24 @@
-isKAppNav=$1
+#!/bin/bash
+####################################################
+#
+# installBookinfo.sh <bookinfo sample path>
+#
+####################################################
+
+if [ "$#" -lt 1 ] || [  x$1 = 'x' ] || [  x$1 = x'?' ] || [  x$1 = x'--?' ] || [  x$1 = x'-?' ] || [  x$1 = x'--help'  ] || [  x$1 = x'help' ]; then
+  echo Syntax: installBookinfo.sh \<bookinfo sample path\>
+    echo "Where:"
+    echo "   <bookinfo sample path> specifies the path where bookinfo sample located"
+  exit 1
+fi
+
+bookinfoPath=$1
 
 echo "kubectl create namespace bookinfo"
 kubectl create namespace bookinfo
 
-if [ x$isKAppNav == 'x' ]; then
-    echo "kubectl apply -f tmpbuild/samples/bookinfo -n bookinfo"
-    kubectl apply -f tmpbuild/samples/bookinfo -n bookinfo
-else
-    echo "kubectl apply -f ../../samples/bookinfo -n bookinfo"
-    kubectl apply -f ../samples/bookinfo -n bookinfo
-fi
+echo "kubectl apply -f $bookinfoPath -n bookinfo"
+kubectl apply -f $bookinfoPath -n bookinfo
 
 if [ $? -eq 0 ]; then
     echo "########## Bookinfo sample application installed successfully ##########"

@@ -7,9 +7,6 @@
 
 # check if user wants help
 if [ "$#" -lt 5 ] || [  x$1 = 'x' ] || [  x$1 = x'?' ] || [  x$1 = x'--?' ] || [  x$1 = x'-?' ] || [  x$1 = x'--help'  ] || [  x$1 = x'help' ]; then
-    echo "================================================================"
-    echo "===> Note: this script is for use for IBM Development only! <==="
-    echo "================================================================"
     echo "This script required 5 positional parameters"
     echo "Syntax: setupTestEnv.sh <platformURL> <platformUsername> <platformPassword> <platform> <dockerUsername>"
     echo
@@ -116,7 +113,7 @@ else
 fi
 
 # check to make sure KAppNav healthy
-./test/isKAppNavHealthy.sh kappnav
+./test/isKAppNavHealthy.sh kappnav 3
 if [ $? -ne 0 ]; then
     echo "########## isKAppNavHealthy failed, exiting ##########"
     exit 1
@@ -130,23 +127,16 @@ if [ $? -ne 0 ]; then
 fi
 
 # install sample stocktrader application
-./test/installStocktrader.sh kappnav
+./test/installStocktrader.sh ../samples/stocktrader
 if [ $? -ne 0 ]; then
     echo "########## installStocktrader failed, exiting ##########"
     exit 1
 fi
 
 # install sample bookinfo application
-./test/installBookinfo.sh kappnav
+./test/installBookinfo.sh ../samples/bookinfo
 if [ $? -ne 0 ]; then
     echo "########## installBookinfo failed, exiting ##########"
-    exit 1
-fi
-
-# install websphere liberty in container
-./test/installLibertyInContainer.sh kappnav
-if [ $? -ne 0 ]; then
-    echo "########## installLibertyInContainer failed, exiting ##########"
     exit 1
 fi
 
