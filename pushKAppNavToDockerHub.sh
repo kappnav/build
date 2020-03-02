@@ -31,12 +31,12 @@ if [ x$1 == x'--?' ] || [ x$1 == x'-?' ]; then
 	echo "./pushKAppNavToDockerHub.sh [<image>]"
 	echo
   echo "By default all images are pushed.  A single image can be pushed by providing the optional"
-  echo "image parameter, where image is one of: apis, controller, init, operator, ui"
+  echo "image parameter, where image is one of: apis, controller, inv, operator, ui"
 	exit 1
 fi
 
 if [ x$image == x ]; then
-	imagelist="apis controller operator ui"
+	imagelist="inv apis controller operator ui"
 else
 	imagelist=$image
 fi

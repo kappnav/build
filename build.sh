@@ -27,11 +27,11 @@ if [ $(echo $PWD | awk '{ n=split($0,d,"/"); print d[n] }') != 'build' ]; then
 fi
 
 if [ x$arg == x'--?' ]; then
-    echo "Builds kAppNav project by cloning and building all code repos:"
+    echo "Builds all or specified kAppNav project by cloning and building all code repos:"
 	echo ""
 	echo "syntax:"
 	echo ""
-	echo "build.sh"
+	echo "build.sh [project]"
 	exit 1
 fi
 
