@@ -4,7 +4,7 @@ handleParams() {
     # check if user wants help
     if [ "$#" -lt 5 ] || [  x$1 = 'x' ] || [  x$1 = x'?' ] || [  x$1 = x'--?' ] || [  x$1 = x'-?' ] || [  x$1 = x'--help'  ] || [  x$1 = x'help' ]; then
         echo "This script requires 5 positional parameters"
-        echo "Syntax: setupTestEnv.sh <platformURL> <platformUsername> <platformPassword> <platform> <dockerUsername> [-b] [-p]"
+        echo "Syntax: setupKAppNavLib.sh <platformURL> <platformUsername> <platformPassword> <platform> <dockerUsername> [-b] [-p]"
         echo
         echo "Where:"
         echo
@@ -94,7 +94,7 @@ login() {
 }
 
 uninstall() {
-    # check if AppNav is already installed
+    # check if KAppNav is already installed
     ./test/isDeployed.sh $oldNamespace
     if [ $? -eq 0 ]; then
         echo "Already installed in namespace $oldNamespace"
