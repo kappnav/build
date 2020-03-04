@@ -34,13 +34,13 @@ if [ x$arg == x'--?' ] || [ x$arg == 'x' ]; then
 	echo 
 	echo "install.sh <docker organization> [kube env]"
 	echo 
-	echo "kube env is one of:  ocp, okd, minikube.  Default is ocp."
+	echo "kube env is one of:  ocp, okd, minikube.  Default is okd."
 	exit 1
 fi
 
 # set default kubeenv if not specified 
 if [ x$kubeenv == 'x' ]; then
-	kubeenv=ocp
+	kubeenv=okd
 else
 # validate
 	if ! [ $kubeenv == 'ocp' ] && ! [ $kubeenv == 'okd' ] && ! [ $kubeenv == 'minikube' ]; then
