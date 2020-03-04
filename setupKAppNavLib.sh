@@ -169,12 +169,12 @@ addSamples() {
     fi
     
     # install sample bookinfo application
-    echo "########## Install bookinfo started on $(date)  ##########"
     ./test/installBookinfo.sh ../samples/bookinfo
     if [ $? -ne 0 ]; then
         echo "########## installBookinfo failed, exiting. ##########"
         exit 1
     fi
+    echo "########## addSamples completed on $(date)  ##########"
     echo 
     echo
 }
