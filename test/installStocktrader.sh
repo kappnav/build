@@ -14,16 +14,16 @@ fi
 
 stocktraderPath=$1
 
-echo "kubectl create namespace stocktrader"
-kubectl create namespace stocktrader
+echo "kubectl create namespace stock-trader"
+kubectl create namespace stock-trader
 
-echo "kubectl apply -f $stocktraderPath -n stocktrader"
-kubectl apply -f $stocktraderPath -n stocktrader
+echo "kubectl apply -f $stocktraderPath -n stock-trader"
+kubectl apply -f $stocktraderPath -n stock-trader
 
 if [ $? -eq 0 ]; then
     # update stocktrader namespace to include all other application namespace that should show up under stock trader component view
-    echo "kubectl annotate Application stock-trader kappnav.component.namespaces=twas,liberty,localliberty -n stocktrader --overwrite"
-    kubectl annotate Application stock-trader kappnav.component.namespaces=twas,liberty,localliberty -n stocktrader --overwrite
+    echo "kubectl annotate Application stock-trader kappnav.component.namespaces=twas,liberty,localliberty -n stock-trader --overwrite"
+    kubectl annotate Application stock-trader kappnav.component.namespaces=twas,liberty,localliberty -n stock-trader --overwrite
     echo "########## Stocktrader sample application installed successfully ##########"
 else 
     echo "########## Failed to install stocktrader sample application ##########"
