@@ -54,6 +54,7 @@ if [ -d ../operator ]; then
 	# pluck image tag off operator image 
 	tag=$(cat ../operator/kappnav.yaml | grep operator: | awk '{ split($0,p,":"); print p[3] }')
 
+	echo Install kappnav to kubeenv $kubeenv
 	kubectl create namespace kappnav 
 
 	cat ../operator/kappnav.yaml | sed "s|kubeEnv: okd|kubeEnv: $kubeenv|" | sed "s|repository: kappnav/|repository: $org/kappnav-|" | sed "s|tag: $tag|tag: latest|" | sed "s|image: kappnav/operator:$tag|image: $org/kappnav-operator:latest|" | kubectl create -f - -n kappnav 

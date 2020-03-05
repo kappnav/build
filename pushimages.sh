@@ -39,14 +39,14 @@ if [ x$arg == x'--?' ] || [ x$arg == 'x' ]; then
 	echo
 	echo "pushimages.sh <docker organization> [<image>]"
 	echo
-	echo "Where image is one of: init, ui, apis, controller, operator"
+	echo "Where image is one of: inv, ui, apis, controller, operator"
 	exit 1
 fi
 
 docker login
 
 if [ x$image == x ]; then
-	imagelist="kappnav-ui kappnav-apis kappnav-controller kappnav-operator" 
+	imagelist="kappnav-inv kappnav-ui kappnav-apis kappnav-controller kappnav-operator" 
 else
 	imagelist="kappnav-"$image
 fi
