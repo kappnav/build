@@ -23,7 +23,7 @@ kubectl apply -f $stocktraderPath -n stock-trader
 if [ $? -eq 0 ]; then
     # update stocktrader namespace to include all other application namespace that should show up under stock trader component view
     echo "kubectl annotate Application stock-trader kappnav.component.namespaces=twas,liberty,localliberty -n stock-trader --overwrite"
-    kubectl annotate Application stock-trader kappnav.component.namespaces=twas,liberty,localliberty -n stock-trader --overwrite
+    kubectl annotate Application stock-trader kappnav.component.namespaces=twas,liberty,localliberty,appmetrics-dash -n stock-trader --overwrite
     echo "########## Stocktrader sample application installed successfully ##########"
 else 
     echo "########## Failed to install stocktrader sample application ##########"
