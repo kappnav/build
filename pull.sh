@@ -2,7 +2,7 @@
 
 #*****************************************************************
 #*
-#* Copyright 2019 IBM Corporation
+#* Copyright 2019, 2020 IBM Corporation
 #*
 #* Licensed under the Apache License, Version 2.0 (the "License");
 #* you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ if [ x$arg == x'--?' ]; then
 	exit 1
 fi
 
-projs='README init samples apis controller operator ui build' 
+projs='README samples apis controller operator ui build' 
 
 for p in $projs; do 
     if [ -d ../$p ]; then

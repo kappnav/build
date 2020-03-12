@@ -1,7 +1,7 @@
 #!/bin/bash
 #*****************************************************************
 #*
-#* Copyright 2019 IBM Corporation
+#* Copyright 2019, 2020 IBM Corporation
 #*
 #* Licensed under the Apache License, Version 2.0 (the "License");
 #* you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 #*****************************************************************
 # clone all development directories except website
 arg=$1 
-projs='README build init samples apis controller operator ui' 
+projs='README build samples apis controller operator ui' 
 
 # make sure running in build directory 
 if [ $(echo $PWD | awk '{ n=split($0,d,"/"); print d[n] }') != 'build' ]; then 

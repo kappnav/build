@@ -1,7 +1,7 @@
 #!/bin/bash
 #*****************************************************************
 #*
-#* Copyright 2019 IBM Corporation
+#* Copyright 2019, 2020 IBM Corporation
 #*
 #* Licensed under the Apache License, Version 2.0 (the "License");
 #* you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@
 # does check out of specified branch across all kappnav projects 
 branch=$1
 
-projs='README build init samples apis controller operator ui' 
+projs='README build samples apis controller operator ui' 
 
 arg=$branch
 # make sure running in build directory 
