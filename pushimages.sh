@@ -46,14 +46,15 @@ fi
 docker login
 
 if [ x$image == x ]; then
-	imagelist="kappnav-inv kappnav-ui kappnav-apis kappnav-controller kappnav-operator" 
+	. ./projectList.sh
+	imagelist=$IMAGES
 else
-	imagelist="kappnav-"$image
+	imagelist=$image
 fi
 tag=latest
 for image in $imagelist; do
-   echo docker tag $image:$tag $org/$image:$tag
-   docker tag $image:$tag $org/$image:$tag
-   echo docker push $org/$image:$tag
-   docker push $org/$image:$tag
+   echo docker tag kappnav-$image:$tag $org/kappnav-$image:$tag
+   docker tag kappnav-$image:$tag $org/kappnav-$image:$tag
+   echo docker push $org/kappnav-$image:$tag
+   docker push $org/kappnav-$image:$tag
 done

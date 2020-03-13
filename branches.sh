@@ -17,7 +17,6 @@
 #*****************************************************************
 # shows all branches
 arg=$1
-projs='README build samples apis controller operator ui' 
 
 # make sure running in build directory 
 if [ $(echo $PWD | awk '{ n=split($0,d,"/"); print d[n] }') != 'build' ]; then 
@@ -35,6 +34,9 @@ if [ x$arg == x'--?' ]; then
 	echo "branches.sh"
 	exit 1
 fi
+
+. ./projectList.sh
+projs=$ALL_PROJECTS
 
 for p in $projs; do 
 	if [ -d ../$p ]; then

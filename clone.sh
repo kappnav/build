@@ -17,7 +17,6 @@
 #*****************************************************************
 # clone all development directories except website
 arg=$1 
-projs='README build samples apis controller operator ui' 
 
 # make sure running in build directory 
 if [ $(echo $PWD | awk '{ n=split($0,d,"/"); print d[n] }') != 'build' ]; then 
@@ -34,6 +33,9 @@ if [ x$arg == x'--?' ]; then
 	echo "clone.sh" 
     exit 0
 fi
+
+. ./projectList.sh
+projs=$ALL_PROJECTS
 
 # clone all projects 
 for p in $projs; do 

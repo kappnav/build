@@ -36,7 +36,8 @@ if [ x$1 == x'--?' ] || [ x$1 == x'-?' ]; then
 fi
 
 if [ x$image == x ]; then
-	imagelist="inv apis controller operator ui"
+    . ./projectList.sh
+	imagelist=$IMAGES
 else
 	imagelist=$image
 fi

@@ -17,10 +17,8 @@
 #*****************************************************************
 # does check out of specified branch across all kappnav projects 
 branch=$1
-
-projs='README build samples apis controller operator ui' 
-
 arg=$branch
+
 # make sure running in build directory 
 if [ $(echo $PWD | awk '{ n=split($0,d,"/"); print d[n] }') != 'build' ]; then 
     echo 'Error: $kappnav/build dir must be current dir.'
@@ -36,6 +34,9 @@ if [ x$arg == x'--?' ] || [ x$arg == 'x' ]; then
 	echo "checkout.sh <branch>" 
 	exit 0
 fi 
+
+. ./projectList.sh
+projs=$ALL_PROJECTS
 
 # build projects
 for p in $projs; do 

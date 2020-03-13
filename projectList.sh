@@ -17,5 +17,6 @@
 #*****************************************************************
 # Defines the list of kAppNav projects for use by other scripts
 
-BUILD_PROJECTS='apis controller inv operator ui'
+BUILD_PROJECTS='apis controller inventory operator ui'
 ALL_PROJECTS=$BUILD_PROJECTS' README build samples kappnav-website'
+IMAGES='apis controller inv operator ui'
