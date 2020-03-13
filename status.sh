@@ -36,7 +36,8 @@ if [ x$arg == x'--?' ]; then
 	exit 1
 fi
 
-projs='README build samples apis controller operator ui' 
+. ./projectList.sh
+projs=$ALL_PROJECTS
 
 for p in $projs; do
     if [ -d ../$p ]; then 

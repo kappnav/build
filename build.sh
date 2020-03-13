@@ -37,7 +37,8 @@ fi
 
 # determine if building all projects or just one
 if [ x$proj == x ]; then
-    projs='apis controller operator ui'
+    . ./projectList.sh
+    projs=$BUILD_PROJECTS
 else
     projs=$proj
 fi
