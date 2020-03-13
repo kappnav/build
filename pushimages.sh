@@ -46,7 +46,7 @@ fi
 docker login
 
 if [ x$image == x ]; then
-	imagelist="kappnav-ui kappnav-apis kappnav-controller kappnav-operator" 
+	imagelist="kappnav-ui kappnav-apis kappnav-controller kappnav-operator kappnav-inv" 
 else
 	imagelist="kappnav-"$image
 fi
