@@ -37,7 +37,7 @@ fi
 
 # determine if building all projects or just one
 if [ x$proj == x ]; then
-    projs='apis controller operator ui'
+    projs='apis controller operator ui inventory'
 else
     projs=$proj
 fi
