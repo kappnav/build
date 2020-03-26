@@ -40,4 +40,5 @@ fi
 
 kubectl delete -f ../operator/kappnav-delete-CR.yaml -n kappnav --now
 kubectl delete -f ../operator/kappnav-delete.yaml -n kappnav
+kubectl delete -f ../operator/deploy/crds/actions_v1_kindactionmapping_crd.yaml -n kappnav
 kubectl delete namespace kappnav
