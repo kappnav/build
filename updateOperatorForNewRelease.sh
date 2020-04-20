@@ -16,15 +16,21 @@
 #*
 #*****************************************************************
 # Update operator to create a new releases dir and make the new release the lastest release
+
+# create the branch for the update
 cd ../operator
 git checkout master
 git pull
 git checkout -b updateOperatorForNewRelease
+
+# create a dir for the new release and update the contents of the latest dir
 . ./version.sh
 newdir="releases/$VERSION"
 mkdir $newdir
 cp kappnav.yaml kappnav-delete.yaml kappnav-delete-CR.yaml $newdir
 cp -r $newdir releases/lastest
+
+# update operator origin
 git add .
 git commit -m "Update release names in operator yaml files"
 git push origin updateOperatorForNewRelease

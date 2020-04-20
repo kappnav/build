@@ -1,5 +1,4 @@
 #!/bin/bash
-
 #*****************************************************************
 #*
 #* Copyright 2020 IBM Corporation
@@ -17,7 +16,6 @@
 #*
 #*****************************************************************
 # does git tag on all projects with releases
-
 tagName=$1
 tagMessage=$2
 
