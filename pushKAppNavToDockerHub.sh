@@ -36,7 +36,7 @@ if [ x$1 == x'--?' ] || [ x$1 == x'-?' ]; then
 fi
 
 if [ x$image == x ]; then
-    . ./projectList.sh
+  . ./projectList.sh
 	imagelist=$IMAGES
 else
 	imagelist=$image
@@ -48,13 +48,15 @@ docker login docker.io
 . ./version.sh
 tag=$VERSION
 
-echo Proceed with tagging kappnav images as $tag and pushing to docker.io/kappnav?
-select response in "Yes" "No"; do
+if [ x$2 != x"--noprompt" ]; then 
+  echo Proceed with tagging kappnav images as $tag and pushing to docker.io/kappnav?
+  select response in "Yes" "No"; do
     case $response in
-        Yes ) break;;
-        No ) exit 1;;
+      Yes ) break;;
+      No ) exit 1;;
     esac
-done
+  done
+fi
 
 for image in $imagelist; do
    echo docker tag kappnav-$image docker.io/kappnav/$image:$tag
