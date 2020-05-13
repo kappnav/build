@@ -21,7 +21,12 @@
 cd ../operator
 git checkout master
 git pull
-git checkout -b updateOperatorForNewRelease
+git branch | grep updateOperatorForNewRelease
+if [ $? -eq 0 ]; then
+    git checkout updateOperatorForNewRelease
+else
+    git checkout -b updateOperatorForNewRelease
+fi
 
 # create a dir for the new release and update the contents of the latest dir
 . ../build/version.sh
@@ -35,10 +40,14 @@ cp $newdir/*.yaml releases/latest
 # update operator origin
 git add .
 git commit -m "Update release names in operator yaml files"
-git push origin updateOperatorForNewRelease
-echo "Create a pull request for branch updateOperatorForNewRelease and merge it"
-echo "to master."
-read -p "Press enter/return after you have merged to master..." wait
+if [ $? -eq 0 ]; then
+    git push origin updateOperatorForNewRelease
+    echo "Create a pull request for branch updateOperatorForNewRelease and merge it"
+    echo "to master."
+    read -p "Press enter/return after you have merged to master..." wait
+else
+    echo "Operator yaml files already up-to-date"
+fi
 
 # back to where we started
 cd -
