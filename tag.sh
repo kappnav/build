@@ -38,26 +38,14 @@ if [ x$tagName == x'--?' ] || [ x$tagName == x'-?' ] || [ x$tagName == 'x' ] || 
 	exit 0
 fi
 
-# check if any repositories need special handlinng
-echo "If any repositories need to tag a commit other than HEAD you must manually"
-echo "do so before running this command.  For example:"
-echo "    git tag -a v0.8.0 \"Version 0.8.0\" 7ee0895"
-echo
-echo "Do you need to quit and create a tag manually?"
-select response in "Yes" "No"; do
-  case $response in
-    Yes ) exit 1;;
-    No ) break;;
-  esac
-done
-
 # create tags and push to origin
 . ./projectList.sh
 for p in $ALL_PROJECTS; do
   if [ -d ../$p ]; then
     cd ../$p
     echo Tagging $p repository
-    git tag -a $tagName -m \"$tagMessage\"
+    read -p "If a commit other than HEAD is needed enter it now: " commit
+    git tag -a $tagName -m \"$tagMessage\" $commit
     if [ $? -eq 0 ]; then
       git push origin $tagName
     fi
