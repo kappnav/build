@@ -2,7 +2,7 @@
 
 #*****************************************************************
 #*
-#* Copyright 2019 IBM Corporation
+#* Copyright 2019, 2020 IBM Corporation
 #*
 #* Licensed under the Apache License, Version 2.0 (the "License");
 #* you may not use this file except in compliance with the License.
@@ -18,17 +18,16 @@
 #*****************************************************************
 org=$1
 kubeenv=$2
-arg=$org
 # make sure running in build directory 
 if [ $(echo $PWD | awk '{ n=split($0,d,"/"); print d[n] }') != 'build' ]; then 
     echo 'Error: $kappnav/build dir must be current dir.'
     echo ''
-    arg="--?"
+    org="--?"
 fi
 
-if [ x$arg == x'--?' ] || [ x$arg == 'x' ]; then
+if [ x$org == x'--?' ] || [ x$org == 'x' ]; then
     echo "Install kAppNav from specified dockerhub.com organization."
-	echo "Will install images tagged latest."
+	echo "Will install images tagged latest, but if org is kappnav will install dev tag"
 	echo 
 	echo "syntax:" 
 	echo 
@@ -57,7 +56,15 @@ if [ -d ../operator ]; then
 	echo Install kappnav to kubeenv $kubeenv
 	kubectl create namespace kappnav 
 
-	cat ../operator/kappnav.yaml | sed "s|kubeEnv: okd|kubeEnv: $kubeenv|" | sed "s|repository: kappnav/|repository: $org/kappnav-|" | sed "s|tag: $tag|tag: latest|" | sed "s|image: kappnav/operator:$tag|image: $org/kappnav-operator:latest|" | kubectl create -f - -n kappnav 
+    if [ $org == 'kappnav' ]; then
+	    #imagePrefix will be "" in this case
+		newTag=dev
+    else
+	    imagePrefix=kappnav-
+		newTag=latest
+	fi
+	operator=operator 
+	cat ../operator/kappnav.yaml | sed "s|kubeEnv: okd|kubeEnv: $kubeenv|" | sed "s|repository: kappnav/|repository: $org/$imagePrefix|" | sed "s|tag: $tag|tag: $newTag|" | sed "s|image: kappnav/operator:$tag|image: $org/$imagePrefix$operator:$newTag|" | kubectl create -f - -n kappnav 
 else
 	echo Cannot install: file ../operator/kappnav.yaml not found. 
 	exit 1
