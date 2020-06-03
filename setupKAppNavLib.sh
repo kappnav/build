@@ -15,6 +15,7 @@ handleParams() {
         echo "   <dockerUsername> specifies your docker username"
         echo "   optional: -b  requests a build to be performed"
         echo "   optional: -p  requests images to be pushed to the user's Docker Hub space"
+        echo "   optional: <repo1,repo2,repo3>  list of local repos to use separated by comma."
         echo
         exit 0
     fi
@@ -28,8 +29,22 @@ handleParams() {
 
     # set defaults
     doBuild=false
-    doPush=false
     
+    allBuildArguments=("$@")
+
+    for ((index=0; index < ${#allBuildArguments[@]}; index++)); do
+        if [ ${allBuildArguments[index]} = '-r' ]; then
+            reposArg=${allBuildArguments[index+1]}
+            if [ "$reposArg" = "" ]; then
+                echo "Missing required argument for -r"
+                exit 1 # exit script with error
+            fi
+            # parse the r option values
+            IFS=',' read -r -a repos <<< "$reposArg"
+        fi
+    done
+
+
     # get optional params
     for o in $(echo $@); do
         if [ $o = '-b' ]; then
@@ -43,10 +58,16 @@ handleParams() {
 
 build() {
     echo "########## Build started on $(date)  ##########"
-    ./build.sh
-    if [ $? -ne 0 ]; then
-        echo "########## Error: build failed ##########"
-        exit 1
+    if [ x$reposArg = 'x' ] || [ x$reposArg = "" ]; then
+        ./build.sh
+    else
+        for repo in "${repos[@]}"; do
+            ./build.sh $repo
+            if [ $? -ne 0 ]; then
+                echo "########## Error: build $repo failed ##########"
+                exit 1
+            fi
+        done
     fi
     echo "########## Build completed on $(date)  ##########"
     echo
@@ -56,12 +77,16 @@ build() {
 push() {
     echo "########## Pushimages started on $(date)  ##########"
     echo "########## Pushing all KAppNav images to docker hub of $dockerID ########## "
-    ./pushimages.sh $dockerID
-    if [ $? -eq 0 ]; then
-        echo "########## Pushed KAppNav images successfully. ##########"
+    if [ x$reposArg = 'x' ] || [ x$reposArg = "" ]; then
+        ./pushimages.sh $dockerID
     else
-        echo "########## Pushed KAppNav images failed, exiting. ##########"
-        exit 1
+        for repo in "${repos[@]}"; do
+            ./pushimages.sh $dockerID $repo
+            if [ $? -ne 0 ]; then
+                echo "########## Pushed $repo images failed, exiting. ##########"
+                exit 1
+            fi            
+        done
     fi
     echo "########## Pushimages completed on $(date)  ##########"
     echo
@@ -126,7 +151,7 @@ uninstall() {
 
 install() {
     echo "########## Install started on $(date)  ##########"
-    ./install.sh $dockerID $platform
+    ./install.sh $dockerID $platform $reposArg
     if [ $? -eq 0 ]; then
         echo "########## Install successfully. ##########"
     else
