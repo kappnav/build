@@ -60,6 +60,10 @@ build() {
     echo "########## Build started on $(date)  ##########"
     if [ x$reposArg = 'x' ] || [ x$reposArg = "" ]; then
         ./build.sh
+        if [ $? -ne 0 ]; then
+            echo "########## Error: build failed ##########"
+            exit 1
+        fi
     else
         for repo in "${repos[@]}"; do
             ./build.sh $repo
@@ -79,6 +83,10 @@ push() {
     echo "########## Pushing all KAppNav images to docker hub of $dockerID ########## "
     if [ x$reposArg = 'x' ] || [ x$reposArg = "" ]; then
         ./pushimages.sh $dockerID
+        if [ $? -ne 0 ]; then
+            echo "########## Pushed kappnav images failed, exiting. ##########"
+            exit 1
+        fi   
     else
         for repo in "${repos[@]}"; do
             ./pushimages.sh $dockerID $repo
