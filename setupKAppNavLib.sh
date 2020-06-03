@@ -15,7 +15,7 @@ handleParams() {
         echo "   <dockerUsername> specifies your docker username"
         echo "   optional: -b  requests a build to be performed"
         echo "   optional: -p  requests images to be pushed to the user's Docker Hub space"
-        echo "   optional: <repo1,repo2,repo3>  list of local repos to use separated by comma."
+        echo "   optional: -r <repo1,repo2,repo3>  list of local repos to use separated by comma."
         echo
         exit 0
     fi
