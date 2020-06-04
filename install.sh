@@ -37,7 +37,7 @@ if [ x$arg == x'--?' ] || [ x$arg == 'x' ]; then
 	echo 
 	echo "   optional: kube env is one of:  ocp, okd, minikube.  Default is okd."
 	echo
-	echo "   optional: -r repolist is one or more of: inv, ui, apis, controller, operator separated by comma."
+	echo "   optional: -r repolist is one or more of: inventory, ui, apis, controller, operator separated by comma."
 	exit 1
 fi
 

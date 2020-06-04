@@ -53,8 +53,12 @@ else
 fi
 tag=latest
 for image in $imagelist; do
-   echo docker tag kappnav-$image:$tag $org/kappnav-$image:$tag
-   docker tag kappnav-$image:$tag $org/kappnav-$image:$tag
-   echo docker push $org/kappnav-$image:$tag
-   docker push $org/kappnav-$image:$tag
+	# special case for inv images as the image name and repo name are different
+	if [ x$image == x"inventory" ]; then
+		image="inv"
+	fi
+	echo docker tag kappnav-$image:$tag $org/kappnav-$image:$tag
+	docker tag kappnav-$image:$tag $org/kappnav-$image:$tag
+	echo docker push $org/kappnav-$image:$tag
+	docker push $org/kappnav-$image:$tag
 done
