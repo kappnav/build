@@ -18,27 +18,26 @@
 #*****************************************************************
 org=$1
 kubeenv=$2
-reposArg=$3
 arg=$org
 
 # make sure running in build directory 
 if [ $(echo $PWD | awk '{ n=split($0,d,"/"); print d[n] }') != 'build' ]; then 
-    echo 'Error: $kappnav/build dir must be current dir.'
-    echo ''
-    arg="--?"
+	echo 'Error: $kappnav/build dir must be current dir.'
+	echo ''
+	arg="--?"
 fi
 
 if [ x$arg == x'--?' ] || [ x$arg == 'x' ]; then
-    echo "Install kAppNav from specified dockerhub.com organization."
+	echo "Install kAppNav from specified dockerhub.com organization."
 	echo "Will install images tagged latest."
 	echo 
 	echo "syntax:" 
 	echo 
-	echo "install.sh <docker organization> [kube env]"
+	echo "install.sh <docker organization> [kube env] [-r repolist]"
 	echo 
-	echo "kube env is one of:  ocp, okd, minikube.  Default is okd."
+	echo "   optional: kube env is one of:  ocp, okd, minikube.  Default is okd."
 	echo
-	echo "   optional: <repo1,repo2,repo3>  list of local repos to use separated by comma."
+	echo "   optional: -r repolist is one or more of: inv, ui, apis, controller, operator separated by comma."
 	exit 1
 fi
 
@@ -53,6 +52,20 @@ else
 	fi
 fi
 
+
+allBuildArguments=("$@")
+for ((index=0; index < ${#allBuildArguments[@]}; index++)); do
+	if [ ${allBuildArguments[index]} = '-r' ]; then
+		reposArg=${allBuildArguments[index+1]}
+		if [ "$reposArg" = "" ]; then
+			echo "Missing required argument for -r"
+			exit 1 # exit script with error
+		fi
+		# parse the r option values
+		IFS=',' read -r -a repos <<< "$reposArg"
+	fi
+done
+
 if [ -d ../operator ]; then 
 
 	# pluck image tag off operator image 
@@ -64,36 +77,36 @@ if [ -d ../operator ]; then
 	if [[ x$reposArg == 'x' || x$reposArg == "" ]]; then
 		cat ../operator/kappnav.yaml | sed "s|kubeEnv: okd|kubeEnv: $kubeenv|" | sed "s|repository: kappnav/|repository: $org/kappnav-|" | sed "s|tag: $tag|tag: latest|" | sed "s|image: kappnav/operator:$tag|image: $org/kappnav-operator:latest|" | kubectl create -f - -n kappnav 
 	else
-		# parse the arguments using "," deliminiter
-		IFS=',' read -r -a repos <<< "$reposArg"
-
 		org=$DOCKER_USER
 		echo $DOCKER_PWD | docker login docker.io -u $DOCKER_USER --password-stdin
 		. ./projectList.sh
-		projs=$IMAGES
+		projs=$BUILD_PROJECTS
 		
 		cat ../operator/kappnav.yaml | \
-    		sed "s|kubeEnv: okd|kubeEnv: $kubeenv|" | \
-    		sed "s|tag: $tag|tag: dev|" | \
-    		sed "s|image: kappnav/operator:$tag|image: kappnav/operator:dev|" \
-    		> temp-kappnav.yaml
+			sed "s|kubeEnv: okd|kubeEnv: $kubeenv|" | \
+			sed "s|tag: $tag|tag: dev|" | \
+			sed "s|image: kappnav/operator:$tag|image: kappnav/operator:dev|" \
+			> temp-kappnav.yaml
 		for p in $projs; do
-    		for repo in "${repos[@]}"; do
-        		if [ x$repo == x$p ]; then
+			for repo in "${repos[@]}"; do
+				if [ x$repo == x$p ]; then
 					if [ x$repo == x"operator" ]; then
 						sed "s|image: kappnav/operator:dev|image: $DOCKER_USER/kappnav-operator:latest|" temp-kappnav.yaml > temp-kappnav-new.yaml
 					else
-            			r="repository: kappnav/"$repo
+						if [ x$repo == x"inventory" ]; then
+							repo="inv"
+						fi
+						r="repository: kappnav/"$repo
 						# get the line number of the repo that the tag need to be updated
 						ln=`grep -n "$r" ../operator/kappnav.yaml | awk -F: '{print $1}'`
 						newln=$(($ln+1))
 						cat temp-kappnav.yaml | \
 						sed "$ln s|repository: kappnav/|repository: $DOCKER_USER/kappnav-|" | \
-    					sed "$newln s|tag: dev|tag: latest|" > temp-kappnav-new.yaml
+						sed "$newln s|tag: dev|tag: latest|" > temp-kappnav-new.yaml
 					fi
 					cat temp-kappnav-new.yaml > temp-kappnav.yaml
-        		fi
-    		done
+				fi
+			done
 		done
 		kubectl create -f temp-kappnav.yaml -n kappnav
 	fi
@@ -101,3 +114,6 @@ else
 	echo Cannot install: file ../operator/kappnav.yaml not found. 
 	exit 1
 fi
+
+# remove temp file created by this script
+rm -fr temp-kappnav*.yaml

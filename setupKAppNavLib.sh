@@ -4,7 +4,7 @@ handleParams() {
     # check if user wants help
     if [ "$#" -lt 5 ] || [  x$1 = 'x' ] || [  x$1 = x'?' ] || [  x$1 = x'--?' ] || [  x$1 = x'-?' ] || [  x$1 = x'--help'  ] || [  x$1 = x'help' ]; then
         echo "This script requires 5 positional parameters"
-        echo "Syntax: setupKAppNavLib.sh <platformURL> <platformUsername> <platformPassword> <platform> <dockerUsername> [-b] [-p]"
+        echo "Syntax: setupKAppNavLib.sh <platformURL> <platformUsername> <platformPassword> <platform> <dockerUsername> [-b] [-p] [-r <repo1,repos2,repo3>]"
         echo
         echo "Where:"
         echo
@@ -31,7 +31,6 @@ handleParams() {
     doBuild=false
     
     allBuildArguments=("$@")
-
     for ((index=0; index < ${#allBuildArguments[@]}; index++)); do
         if [ ${allBuildArguments[index]} = '-r' ]; then
             reposArg=${allBuildArguments[index+1]}
@@ -41,9 +40,14 @@ handleParams() {
             fi
             # parse the r option values
             IFS=',' read -r -a repos <<< "$reposArg"
+            repoOption="-r $reposArg"
         fi
     done
 
+    # construct projectList variable to pass in to build and push
+    for repo in "${repos[@]}"; do
+        projectList="$projectList $repo "
+    done
 
     # get optional params
     for o in $(echo $@); do
@@ -57,46 +61,26 @@ handleParams() {
 }
 
 build() {
-    echo "########## Build started on $(date)  ##########"
-    if [ x$reposArg = 'x' ] || [ x$reposArg = "" ]; then
-        ./build.sh
-        if [ $? -ne 0 ]; then
-            echo "########## Error: build failed ##########"
-            exit 1
-        fi
-    else
-        for repo in "${repos[@]}"; do
-            ./build.sh $repo
-            if [ $? -ne 0 ]; then
-                echo "########## Error: build $repo failed ##########"
-                exit 1
-            fi
-        done
+    echo "########## Build $reposArg started on $(date)  ##########"
+    ./build.sh "$projectList"
+    if [ $? -ne 0 ]; then
+        echo "########## Error: build $reposArg failed ##########"
+        exit 1
     fi
-    echo "########## Build completed on $(date)  ##########"
+    echo "########## Build $reposArg completed on $(date)  ##########"
     echo
     echo
 }
 
 push() {
     echo "########## Pushimages started on $(date)  ##########"
-    echo "########## Pushing all KAppNav images to docker hub of $dockerID ########## "
-    if [ x$reposArg = 'x' ] || [ x$reposArg = "" ]; then
-        ./pushimages.sh $dockerID
-        if [ $? -ne 0 ]; then
-            echo "########## Pushed kappnav images failed, exiting. ##########"
-            exit 1
-        fi   
-    else
-        for repo in "${repos[@]}"; do
-            ./pushimages.sh $dockerID $repo
-            if [ $? -ne 0 ]; then
-                echo "########## Pushed $repo images failed, exiting. ##########"
-                exit 1
-            fi            
-        done
-    fi
-    echo "########## Pushimages completed on $(date)  ##########"
+    echo "########## Pushing all KAppNav images to docker hub of $dockerID $reposArg ########## "
+    ./pushimages.sh $dockerID "$projectList"
+    if [ $? -ne 0 ]; then
+        echo "########## Error: pushimages $reposArg failed, exiting. ##########"
+        exit 1
+    fi   
+    echo "########## Pushimages $reposArg completed on $(date)  ##########"
     echo
     echo
 }
@@ -159,7 +143,7 @@ uninstall() {
 
 install() {
     echo "########## Install started on $(date)  ##########"
-    ./install.sh $dockerID $platform $reposArg
+    ./install.sh $dockerID $platform $repoOption
     if [ $? -eq 0 ]; then
         echo "########## Install successfully. ##########"
     else

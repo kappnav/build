@@ -5,10 +5,10 @@
 handleParams $@
 
 # build and push are optional and only done by request
-if [ $doBuild = true ]; then
+if [[ $doBuild = true ]]; then
     build
 fi
-if [ $doPush = true ]; then
+if [[ $doPush = true ]]; then
     push
 fi
 
