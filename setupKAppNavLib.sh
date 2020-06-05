@@ -4,7 +4,7 @@ handleParams() {
     # check if user wants help
     if [ "$#" -lt 5 ] || [  x$1 = 'x' ] || [  x$1 = x'?' ] || [  x$1 = x'--?' ] || [  x$1 = x'-?' ] || [  x$1 = x'--help'  ] || [  x$1 = x'help' ]; then
         echo "This script requires 5 positional parameters"
-        echo "Syntax: setupKAppNavLib.sh <platformURL> <platformUsername> <platformPassword> <platform> <dockerUsername> [-b] [-p] [-r <repo1,repos2,repo3>]"
+        echo "Syntax: setupKAppNavLib.sh <platformURL> <platformUsername> <platformPassword> <platform> <dockerUsername> [-b] [-p] [-r repolist<repo1,repos2,repo3>]"
         echo
         echo "Where:"
         echo
@@ -15,7 +15,7 @@ handleParams() {
         echo "   <dockerUsername> specifies your docker username"
         echo "   optional: -b  requests a build to be performed"
         echo "   optional: -p  requests images to be pushed to the user's Docker Hub space"
-        echo "   optional: -r <repo1,repo2,repo3>  list of local repos to use separated by comma."
+        echo "   optional: -r repolist is one or more of: inventory, ui, apis, controller, operator separated by comma."
         echo
         exit 0
     fi
@@ -40,14 +40,22 @@ handleParams() {
             fi
             # parse the r option values
             IFS=',' read -r -a repos <<< "$reposArg"
-            repoOption="-r $reposArg"
         fi
     done
 
-    # construct projectList variable to pass in to build and push
-    for repo in "${repos[@]}"; do
-        projectList="$projectList $repo "
-    done
+    # construct projectList to pass in to build and pushimages, and imageOption variable to pass in to install
+    if [ "$reposArg" != "" ]; then
+        for repo in "${repos[@]}"; do
+            projectList="$projectList $repo "
+            if [ "x$repo" == x"inventory" ]; then
+                repo="inv"
+            fi
+            imageOption="$imageOption$repo"
+            imageOption="$imageOption,"
+            imageList="$imageList $repo"
+        done
+        imageOption="-i $imageOption"
+    fi
 
     # get optional params
     for o in $(echo $@); do
@@ -75,7 +83,7 @@ build() {
 push() {
     echo "########## Pushimages started on $(date)  ##########"
     echo "########## Pushing all KAppNav images to docker hub of $dockerID $reposArg ########## "
-    ./pushimages.sh $dockerID "$projectList"
+    ./pushimages.sh $dockerID "$imageList"
     if [ $? -ne 0 ]; then
         echo "########## Error: pushimages $reposArg failed, exiting. ##########"
         exit 1
@@ -143,7 +151,8 @@ uninstall() {
 
 install() {
     echo "########## Install started on $(date)  ##########"
-    ./install.sh $dockerID $platform $repoOption
+    echo "JUNI passing $imageOption"
+    ./install.sh $dockerID $platform $imageOption
     if [ $? -eq 0 ]; then
         echo "########## Install successfully. ##########"
     else
