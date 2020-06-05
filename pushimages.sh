@@ -37,15 +37,15 @@ if [ x$arg == x'--?' ] || [ x$arg == 'x' ]; then
 	echo
 	echo syntax:
 	echo
-	echo "pushimages.sh <docker organization> [<image>]"
+	echo "pushimages.sh <docker organization> [<images>]"
 	echo
-	echo "Where image is one of: inv, ui, apis, controller, operator"
+	echo "Where images is one or more of: inv, ui, apis, controller, operator"
 	exit 1
 fi
 
 docker login
 
-if [ x$image == x ]; then
+if [[ x$image == x ]]; then
 	. ./projectList.sh
 	imagelist=$IMAGES
 else

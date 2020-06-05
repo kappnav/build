@@ -74,39 +74,33 @@ if [ -d ../operator ]; then
 	echo Install kappnav to kubeenv $kubeenv
 	kubectl create namespace kappnav 
 
-	if [[ x$reposArg == 'x' || x$reposArg == "" ]]; then
+	if [ x$reposArg == 'x' ] || [ x$reposArg == "" ]; then
 		cat ../operator/kappnav.yaml | sed "s|kubeEnv: okd|kubeEnv: $kubeenv|" | sed "s|repository: kappnav/|repository: $org/kappnav-|" | sed "s|tag: $tag|tag: latest|" | sed "s|image: kappnav/operator:$tag|image: $org/kappnav-operator:latest|" | kubectl create -f - -n kappnav 
 	else
 		org=$DOCKER_USER
 		echo $DOCKER_PWD | docker login docker.io -u $DOCKER_USER --password-stdin
-		. ./projectList.sh
-		projs=$BUILD_PROJECTS
 		
 		cat ../operator/kappnav.yaml | \
 			sed "s|kubeEnv: okd|kubeEnv: $kubeenv|" | \
 			sed "s|tag: $tag|tag: dev|" | \
 			sed "s|image: kappnav/operator:$tag|image: kappnav/operator:dev|" \
 			> temp-kappnav.yaml
-		for p in $projs; do
-			for repo in "${repos[@]}"; do
-				if [ x$repo == x$p ]; then
-					if [ x$repo == x"operator" ]; then
-						sed "s|image: kappnav/operator:dev|image: $DOCKER_USER/kappnav-operator:latest|" temp-kappnav.yaml > temp-kappnav-new.yaml
-					else
-						if [ x$repo == x"inventory" ]; then
-							repo="inv"
-						fi
-						r="repository: kappnav/"$repo
-						# get the line number of the repo that the tag need to be updated
-						ln=`grep -n "$r" ../operator/kappnav.yaml | awk -F: '{print $1}'`
-						newln=$(($ln+1))
-						cat temp-kappnav.yaml | \
-						sed "$ln s|repository: kappnav/|repository: $DOCKER_USER/kappnav-|" | \
-						sed "$newln s|tag: dev|tag: latest|" > temp-kappnav-new.yaml
-					fi
-					cat temp-kappnav-new.yaml > temp-kappnav.yaml
+		for repo in "${repos[@]}"; do
+			if [ x$repo == x"operator" ]; then
+				sed "s|image: kappnav/operator:dev|image: $DOCKER_USER/kappnav-operator:latest|" temp-kappnav.yaml > temp-kappnav-new.yaml
+			else
+				if [ x$repo == x"inventory" ]; then
+					repo="inv"
 				fi
-			done
+				r="repository: kappnav/"$repo
+				# get the line number of the repo that the tag need to be updated
+				ln=`grep -n "$r" ../operator/kappnav.yaml | awk -F: '{print $1}'`
+				newln=$(($ln+1))
+				cat temp-kappnav.yaml | \
+				sed "$ln s|repository: kappnav/|repository: $DOCKER_USER/kappnav-|" | \
+				sed "$newln s|tag: dev|tag: latest|" > temp-kappnav-new.yaml
+			fi
+			cat temp-kappnav-new.yaml > temp-kappnav.yaml
 		done
 		kubectl create -f temp-kappnav.yaml -n kappnav
 	fi
