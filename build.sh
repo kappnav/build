@@ -26,7 +26,7 @@ if [ $(echo $PWD | awk '{ n=split($0,d,"/"); print d[n] }') != 'build' ]; then
     arg="--?"
 fi
 
-if [ x$arg == x'--?' ]; then
+if [[ x$arg == x'--?' ]]; then
     echo "Builds all or specified kAppNav project by cloning and building all code repos:"
 	echo ""
 	echo "syntax:"
@@ -36,7 +36,7 @@ if [ x$arg == x'--?' ]; then
 fi
 
 # determine if building all projects or just one
-if [ x$proj == x ]; then
+if [[ x$proj == x ]]; then
     . ./projectList.sh
     projs=$BUILD_PROJECTS
 else

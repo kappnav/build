@@ -18,7 +18,7 @@
 #*****************************************************************
 # push all images or specified image to docker hub
 org=$1
-image=$2
+images=$2
 
 arg=$org
 # make sure running in build directory
@@ -37,24 +37,24 @@ if [ x$arg == x'--?' ] || [ x$arg == 'x' ]; then
 	echo
 	echo syntax:
 	echo
-	echo "pushimages.sh <docker organization> [<image>]"
+	echo "pushimages.sh <docker organization> [<images>]"
 	echo
-	echo "Where image is one of: inv, ui, apis, controller, operator"
+	echo "Where images is one or more of: inv, ui, apis, controller, operator separated by empty space"
 	exit 1
 fi
 
 docker login
 
-if [ x$image == x ]; then
+if [ "x$images" == "x" ]; then
 	. ./projectList.sh
 	imagelist=$IMAGES
 else
-	imagelist=$image
+	imagelist=$images
 fi
 tag=latest
 for image in $imagelist; do
-   echo docker tag kappnav-$image:$tag $org/kappnav-$image:$tag
-   docker tag kappnav-$image:$tag $org/kappnav-$image:$tag
-   echo docker push $org/kappnav-$image:$tag
-   docker push $org/kappnav-$image:$tag
+	echo docker tag kappnav-$image:$tag $org/kappnav-$image:$tag
+	docker tag kappnav-$image:$tag $org/kappnav-$image:$tag
+	echo docker push $org/kappnav-$image:$tag
+	docker push $org/kappnav-$image:$tag
 done
