@@ -45,7 +45,7 @@ for p in $ALL_PROJECTS; do
     cd ../$p
     echo Tagging $p repository
     read -p "If a commit other than HEAD is needed enter it now: " commit
-    git tag -a $tagName -m \"$tagMessage\" $commit
+    git tag -a $tagName -m "$tagMessage" $commit
     if [ $? -eq 0 ]; then
       git push origin $tagName
     fi
