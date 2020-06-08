@@ -43,7 +43,7 @@ handleParams() {
         fi
     done
 
-    # construct projectList to pass in to build and pushimages, and imageOption variable to pass in to install
+    # construct projectList to pass in to build, imageList to pass in to pushimages, and imageOption to pass in to install
     if [ "$reposArg" != "" ]; then
         for repo in "${repos[@]}"; do
             projectList="$projectList $repo "
@@ -69,26 +69,26 @@ handleParams() {
 }
 
 build() {
-    echo "########## Build $reposArg started on $(date)  ##########"
+    echo "########## Build $projectList started on $(date)  ##########"
     ./build.sh "$projectList"
     if [ $? -ne 0 ]; then
-        echo "########## Error: build $reposArg failed ##########"
+        echo "########## Error: build $projectList failed ##########"
         exit 1
     fi
-    echo "########## Build $reposArg completed on $(date)  ##########"
+    echo "########## Build $projectList completed on $(date)  ##########"
     echo
     echo
 }
 
 push() {
     echo "########## Pushimages started on $(date)  ##########"
-    echo "########## Pushing all KAppNav images to docker hub of $dockerID $reposArg ########## "
+    echo "########## Pushing all KAppNav images to docker hub of $dockerID $imageList ########## "
     ./pushimages.sh $dockerID "$imageList"
     if [ $? -ne 0 ]; then
-        echo "########## Error: pushimages $reposArg failed, exiting. ##########"
+        echo "########## Error: pushimages $imageList failed, exiting. ##########"
         exit 1
     fi   
-    echo "########## Pushimages $reposArg completed on $(date)  ##########"
+    echo "########## Pushimages $imageList completed on $(date)  ##########"
     echo
     echo
 }
@@ -151,7 +151,6 @@ uninstall() {
 
 install() {
     echo "########## Install started on $(date)  ##########"
-    echo "JUNI passing $imageOption"
     ./install.sh $dockerID $platform $imageOption
     if [ $? -eq 0 ]; then
         echo "########## Install successfully. ##########"
